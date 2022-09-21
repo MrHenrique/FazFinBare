@@ -66,7 +66,7 @@ const Select = ({
   optionComponent = Option,
   touchableText = "Select",
   title = "",
-  data = [],
+  dadosFaz = [],
   objKey = "id",
   objValue = "name",
 }) => {
@@ -111,7 +111,7 @@ const Select = ({
           </View>
           <FlatList
             style={styles.liststyle}
-            data={data}
+            data={dadosFaz}
             keyExtractor={(_, index) => String(index)}
             renderItem={({ item }) => renderOption(item)}
           />

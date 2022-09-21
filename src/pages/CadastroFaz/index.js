@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Texto,
@@ -10,19 +10,32 @@ import {
   CampoTexto,
 } from "./styles";
 import { useNavigation } from "@react-navigation/native";
-
+import { database } from "../../databases";
+import { CadFazModel } from "../../databases/model/cadFazModel";
+import { Alert } from "react-native";
+import {Select} from "../../components/Select";
 function CadastroFaz() {
   const [nomefaz, setNomefaz] = useState("");
   const [proprietario, setProprietario] = useState("");
   const [tipoprod, setTipoprod] = useState("");
-  function cadFaz() {
-    const data = {
-      nomefaz,
-      proprietario,
-      tipoprod,
-    };
-    console.log(data);
+  async function handleSave() {
+    await database.write(async () => {
+      await database.get("cadFaz").create((data) => {
+        data.nomefaz = nomefaz,
+        data.proprietario = proprietario,
+        data.tipoprod = tipoprod;
+      });
+    });
+    Alert.alert("Cadastro com sucesso!");
   }
+  async function fetchData() {
+    const cadFazCollection = database.get("cadFaz");
+    const response = await cadFazCollection.query().fetch();
+    console.log(response);
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
   const navigation = useNavigation();
   const imgbg1 = "../../../assets/backgroundCad.jpg";
   return (
@@ -48,7 +61,7 @@ function CadastroFaz() {
             value={tipoprod}
             placeholder="Ex: Pecuaria Leiteira"
           ></CampoTexto>
-          <BotaoPress>
+          <BotaoPress onPress={handleSave}>
             <TituloBotao>{"Cadastrar"}</TituloBotao>
           </BotaoPress>
           <BotaoPress onPress={() => navigation.navigate("Home")}>
